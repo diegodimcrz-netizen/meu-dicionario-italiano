@@ -98,9 +98,6 @@ jobs:
               }
           }
 
-          dependencies {
-              implementation 'androidx.appcompat:appcompat:1.7.0'
-          }
           EOF
 
           cat > app/src/main/AndroidManifest.xml <<'EOF'
@@ -123,7 +120,7 @@ jobs:
 
           cat > app/src/main/res/values/styles.xml <<'EOF'
           <resources>
-              <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+              <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
                   <item name="android:fontFamily">sans</item>
                   <item name="android:colorAccent">#173d32</item>
                   <item name="android:statusBarColor">#173d32</item>
@@ -139,9 +136,9 @@ jobs:
           import android.os.Bundle;
           import android.webkit.WebView;
           import android.webkit.WebSettings;
-          import androidx.appcompat.app.AppCompatActivity;
+          import android.app.Activity;
 
-          public class MainActivity extends AppCompatActivity {
+          public class MainActivity extends Activity {
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);

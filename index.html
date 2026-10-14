@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#173d32">
+<link rel="manifest" href="./manifest.json">
 <title>Il Mio Dizionario</title>
 <style>
 :root {
@@ -287,6 +288,14 @@ document.getElementById("addForm").addEventListener("submit", e => {
 });
 
 render();
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(error => {
+      console.warn("Não foi possível ativar o modo offline:", error);
+    });
+  });
+}
+
 </script>
 </body>
 </html>

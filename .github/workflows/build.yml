@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/build.yml'
       - 'index.html'
+      - 'tools/build_dictionary.py'
 
 permissions:
   contents: read
@@ -45,6 +46,8 @@ jobs:
           mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/diego/dizionario
           mkdir -p app/src/main/res/values
+          curl -fL --retry 3 "https://download.freedict.org/dictionaries/ita-por/2025.11.23/freedict-ita-por-2025.11.23.src.tar.xz" -o /tmp/freedict-ita-por.src.tar.xz
+          python3 tools/build_dictionary.py /tmp/freedict-ita-por.src.tar.xz app/src/main/assets/dictionary-data.js
           cp index.html app/src/main/assets/index.html
 
           cat > settings.gradle <<'EOF'

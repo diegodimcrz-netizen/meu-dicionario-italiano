@@ -97,8 +97,10 @@ form { margin-top: 18px; }
     <p id="status"></p>
     <p class="small">As palavras adicionadas ficam salvas neste navegador.</p>
   </div>
+<p class="small">Base complementar: FreeDict/WikDict, licença Creative Commons Attribution-ShareAlike 3.0. Fonte: <a href="https://freedict.org/" target="_blank" rel="noopener">freedict.org</a>.</p>
 </main>
 
+<script src="./dictionary-data.js"></script>
 <script>
 const initial = [
 ["ciao","olá; tchau","tcháo","Ciao, Diego!"],
@@ -185,6 +187,9 @@ const initial = [
 ["grazie mille","muito obrigado","grát-tsie míl-le","Grazie mille per l'aiuto."]
 ];
 
+const starterKeys = new Set(initial.map(w => w[0].toLocaleLowerCase("it")));
+initial.push(...(window.freedictEntries || []).filter(w => !starterKeys.has(String(w[0] || "").toLocaleLowerCase("it"))));
+
 const key = "mioDizionarioV1";
 const favKey = "mioDizionarioFavV1";
 let words = initial.map((w,i)=>({id:i,it:w[0],pt:w[1],pron:w[2],ex:w[3]}));
@@ -251,7 +256,7 @@ function render() {
 
     const pron = document.createElement("div");
     pron.className = "pron";
-    pron.textContent = "Pronúncia aproximada: " + (w.pron || "não informada");
+    pron.textContent = "Pronúncia (quando disponível): " + (w.pron || "não informada");
 
     const translation = document.createElement("div");
     translation.className = "translation";

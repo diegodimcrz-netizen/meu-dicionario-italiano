@@ -10,14 +10,22 @@
 header{background:var(--green);color:white;padding:18px 20px}header h1{font-size:1.2rem;margin:0}header p{margin:4px 0 0;color:#e0e9e4;font-size:.9rem}
 main{max-width:760px;margin:auto;padding:16px;display:grid;gap:14px}
 .avatar{min-height:300px;border-radius:22px;overflow:hidden;background:linear-gradient(145deg,#e9d6c2,#f5e9dc 50%,#c6d7c8);display:grid;place-items:center;position:relative}
-.portrait{width:170px;height:215px;position:relative}
+.portrait{width:170px;height:235px;position:relative;transform-origin:50% 85%}
 .hair{position:absolute;left:23px;top:6px;width:125px;height:145px;background:#4b3028;border-radius:55% 48% 44% 45%;box-shadow:inset 12px 0 #634034}
-.face{position:absolute;left:36px;top:27px;width:100px;height:128px;background:#f3cdb8;border-radius:48% 48% 45% 45%;z-index:2;box-shadow:inset 8px 0 #f8d9c7}
-.face:before{content:"";position:absolute;top:58px;left:19px;width:12px;height:5px;border-radius:50%;background:#594139;box-shadow:49px 0 #594139}
-.face:after{content:"";position:absolute;top:88px;left:41px;width:20px;height:9px;border-bottom:3px solid #a95f58;border-radius:50%}
+.face{position:absolute;left:36px;top:27px;width:100px;height:128px;background:#f3cdb8;border-radius:48% 48% 45% 45%;z-index:2;box-shadow:inset 8px 0 #f8d9c7;transform-origin:50% 20%}
+.face:before{content:"";position:absolute;top:58px;left:19px;width:12px;height:5px;border-radius:50%;background:#594139;box-shadow:49px 0 #594139;animation:blink 5.2s infinite}
+.face:after{content:"";position:absolute;top:88px;left:41px;width:20px;height:9px;border-bottom:3px solid #a95f58;border-radius:50%;transform-origin:50% 30%}
+.avatar.speaking .portrait{animation:gentle-bob 1.7s ease-in-out infinite}
+.avatar.speaking .face{animation:head-talk 2.4s ease-in-out infinite}
+.avatar.speaking .face:after{animation:mouth-talk .22s ease-in-out infinite alternate}
+.avatar.speaking .body{animation:body-talk 1.7s ease-in-out infinite}
+@keyframes blink{0%,44%,48%,72%,76%,100%{transform:scaleY(1)}46%,74%{transform:scaleY(.12)}}
+@keyframes gentle-bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(1deg)}}
+@keyframes head-talk{0%,100%{transform:rotate(0)}35%{transform:rotate(-1.5deg)}70%{transform:rotate(1.2deg)}}
+@keyframes mouth-talk{from{height:3px;width:17px;border-bottom-width:2px}to{height:13px;width:15px;border:2px solid #a95f58;border-radius:45% 45% 55% 55%;background:#8d4646}}
 .cheek{position:absolute;top:83px;left:9px;width:19px;height:10px;border-radius:50%;background:#e99c91;opacity:.75;box-shadow:54px 0 #e99c91}
 .neck{position:absolute;top:139px;left:69px;width:34px;height:32px;background:#e8bda6;z-index:1}
-.body{position:absolute;top:157px;left:14px;width:145px;height:78px;background:#315b4c;border-radius:65px 65px 12px 12px}
+.body{position:absolute;top:157px;left:14px;width:145px;height:78px;background:#315b4c;border-radius:65px 65px 12px 12px;transform-origin:50% 0}
 .hairline{position:absolute;top:12px;left:32px;width:110px;height:67px;border-radius:50% 50% 10% 10%;border-top:17px solid #4b3028;z-index:3}
 .hairline:after{content:"";position:absolute;right:-6px;top:4px;width:23px;height:74px;border-right:12px solid #4b3028;border-radius:50%}
 .tag{position:absolute;left:14px;top:14px;background:#ffffffd9;padding:7px 11px;border-radius:999px;font-size:.8rem}
@@ -28,19 +36,20 @@ main{max-width:760px;margin:auto;padding:16px;display:grid;gap:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap}button{border:0;border-radius:14px;padding:12px 15px;font:inherit;font-weight:650;cursor:pointer;background:var(--green);color:white}button.secondary{background:#e3ebe5;color:var(--green)}button:disabled{opacity:.5}
 textarea{width:100%;min-height:80px;border:1px solid #d5ddd6;border-radius:13px;padding:12px;font:inherit;resize:vertical;background:#fff}
 small{color:var(--muted)}.status{font-size:.9rem;color:var(--muted);min-height:22px}
+@media(prefers-reduced-motion:reduce){.avatar.speaking .portrait,.avatar.speaking .face,.avatar.speaking .body,.avatar.speaking .face:after,.face:before{animation:none}}
 </style></head>
 <body>
 <header><h1>Akira · Conversazione italiana</h1><p>Parla, leggi e migliora il tuo italiano — piano piano.</p></header>
 <main>
-<section class="avatar" aria-label="Rappresentazione visiva di Akira">
+<section class="avatar" id="avatar" aria-label="Rappresentazione visiva animata di Akira">
  <div class="tag">● Akira · tutor d’italiano</div>
  <div class="portrait" aria-hidden="true"><div class="hair"></div><div class="neck"></div><div class="body"></div><div class="face"><div class="cheek"></div></div><div class="hairline"></div></div>
- <div class="note">Avatar illustrativo iniziale · possiamo sostituirlo con l’immagine scelta</div>
+ <div class="note">Akira · piscadas e movimentos suaves durante a fala</div>
 </section>
 <section class="bubble"><div class="label">AKIRA DICE</div><div class="italian" id="prompt">Ciao, Diego! Che lavoro fai?</div><div class="pron" id="pron">Pronúncia: tcháo, Diêgo! ke lavôro fai?</div><div class="translation" id="translation">Tradução: Olá, Diego! Qual é o seu trabalho?</div><div class="row" style="margin-top:14px"><button id="speak">🔊 Ouvir frase</button><button class="secondary" id="next">Próxima pergunta</button></div></section>
-<section class="panel"><div class="label">A SUA RESPOSTA</div><textarea id="answer" placeholder="Escreva sua resposta em italiano… ou use o microfone abaixo."></textarea><div class="row" style="margin-top:10px"><button id="mic">🎙️ Falar</button><button class="secondary" id="correct">Corrigir minha frase</button></div><p class="status" id="status" role="status">O microfone depende do suporte do navegador e da permissão de áudio.</p></section>
-<section class="panel" id="feedback" aria-live="polite"><div class="label">CORREÇÃO E PRONÚNCIA</div><p>Quando você responder, a correção aparecerá aqui. Esta versão inicial oferece fala sintetizada e reconhecimento de voz quando compatíveis com o seu navegador; ainda não é uma conversa com IA em tempo real.</p></section>
-<small>Protótipo inicial. Para respostas inteligentes e correções automáticas, será necessário conectar um serviço de IA; para o avatar realista com boca sincronizada, integrar uma tecnologia de avatar.</small>
+<section class="panel"><div class="label">A SUA RESPOSTA</div><textarea id="answer" placeholder="Escreva sua resposta em italiano… ou use o microfone abaixo."></textarea><div class="row" style="margin-top:10px"><button id="mic">🎙️ Falar</button><button class="secondary" id="correct">Corrigir minha frase</button></div><p class="status" id="status" role="status">Toque em “Ouvir frase” para escutar a Akira e ver as animações.</p></section>
+<section class="panel" id="feedback" aria-live="polite"><div class="label">CORREÇÃO E PRONÚNCIA</div><p>Quando você responder, a correção aparecerá aqui. Esta versão inicial oferece fala sintetizada e reconhecimento de voz quando compatíveis com o navegador; ainda não é uma conversa com IA em tempo real.</p></section>
+<small>Esta versão usa animações 2D simples no avatar ilustrado. Para movimentos realistas e sincronização labial precisa, será necessário integrar uma tecnologia de avatar dedicada.</small>
 </main>
 <script>
 const qs=[
@@ -48,10 +57,12 @@ const qs=[
 {it:"Lavori da solo o con qualcuno?",pr:"lavôri da sôlo o con kwal-kúno?",pt:"Você trabalha sozinho ou com alguém?"},
 {it:"Che cosa fai durante la giornata?",pr:"ke côza fai durante la djornáta?",pt:"O que você faz durante o dia?"},
 {it:"Lavori con l’alluminio e il vetro?",pr:"lavôri con lal-lumínio e il vê-tro?",pt:"Você trabalha com alumínio e vidro?"}
-];let idx=0;
-function show(){let q=qs[idx];prompt.textContent=q.it;pron.textContent="Pronúncia: "+q.pr;translation.textContent="Tradução: "+q.pt;answer.value="";feedback.innerHTML='<div class="label">CORREÇÃO E PRONÚNCIA</div><p>Responda em italiano e toque em “Corrigir minha frase”.</p>'}
+];let idx=0;const avatar=document.getElementById('avatar');const statusEl=document.getElementById('status');
+function stopMotion(){avatar.classList.remove('speaking')}
+function show(){speechSynthesisSafeCancel();stopMotion();let q=qs[idx];document.getElementById('prompt').textContent=q.it;document.getElementById('pron').textContent="Pronúncia: "+q.pr;document.getElementById('translation').textContent="Tradução: "+q.pt;document.getElementById('answer').value="";document.getElementById('feedback').innerHTML='<div class="label">CORREÇÃO E PRONÚNCIA</div><p>Responda em italiano e toque em “Corrigir minha frase”.</p>'}
+function speechSynthesisSafeCancel(){if('speechSynthesis'in window)speechSynthesis.cancel()}
 document.getElementById('next').onclick=()=>{idx=(idx+1)%qs.length;show()};
-document.getElementById('speak').onclick=()=>{if(!('speechSynthesis'in window)){status.textContent='A fala sintetizada não é suportada neste navegador.';return}let u=new SpeechSynthesisUtterance(qs[idx].it);u.lang='it-IT';u.rate=.82;speechSynthesis.cancel();speechSynthesis.speak(u);status.textContent='Reproduzindo a frase em italiano…'};
-document.getElementById('mic').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){status.textContent='Reconhecimento de voz indisponível neste navegador. Você pode digitar a resposta.';return}let r=new SR();r.lang='it-IT';r.interimResults=true;r.onresult=e=>{answer.value=Array.from(e.results).map(x=>x[0].transcript).join('');status.textContent='Transcrição recebida. Toque em “Corrigir minha frase”.'};r.onerror=()=>status.textContent='Não foi possível reconhecer a fala. Verifique a permissão do microfone.';r.start();status.textContent='Ti ascolto… Parla in italiano!'};
-document.getElementById('correct').onclick=()=>{let a=answer.value.trim();if(!a){status.textContent='Escreva ou dite uma frase primeiro.';return}feedback.innerHTML='<div class="label">SUA FRASE</div><p class="italian"></p><p>Esta versão ainda não está conectada à IA, então não consigo determinar a correção automaticamente. A sua resposta foi registrada acima; por enquanto, envie-a nesta conversa para receber uma correção personalizada.</p>';feedback.querySelector('.italian').textContent=a;status.textContent='Frase pronta para revisão.'};
+document.getElementById('speak').onclick=()=>{if(!('speechSynthesis'in window)){statusEl.textContent='A fala sintetizada não é suportada neste navegador.';return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(qs[idx].it);u.lang='it-IT';u.rate=.82;u.onstart=()=>{avatar.classList.add('speaking');statusEl.textContent='Akira sta parlando… A Akira está falando!'};u.onend=()=>{stopMotion();statusEl.textContent='Frase concluída. Toque novamente para ouvir.'};u.onerror=()=>{stopMotion();statusEl.textContent='Não foi possível reproduzir a voz agora.'};speechSynthesis.speak(u)};
+document.getElementById('mic').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){statusEl.textContent='Reconhecimento de voz indisponível neste navegador. Você pode digitar a resposta.';return}let r=new SR();r.lang='it-IT';r.interimResults=true;r.onresult=e=>{document.getElementById('answer').value=Array.from(e.results).map(x=>x[0].transcript).join('');statusEl.textContent='Transcrição recebida. Toque em “Corrigir minha frase”.'};r.onerror=()=>statusEl.textContent='Não foi possível reconhecer a fala. Verifique a permissão do microfone.';r.start();statusEl.textContent='Ti ascolto… Parla in italiano!'};
+document.getElementById('correct').onclick=()=>{let a=document.getElementById('answer').value.trim();if(!a){statusEl.textContent='Escreva ou dite uma frase primeiro.';return}let feedback=document.getElementById('feedback');feedback.innerHTML='<div class="label">SUA FRASE</div><p class="italian"></p><p>Esta versão ainda não está conectada à IA, então não consigo determinar a correção automaticamente. Envie sua frase nesta conversa para receber uma correção personalizada.</p>';feedback.querySelector('.italian').textContent=a;statusEl.textContent='Frase pronta para revisão.'};
 </script></body></html>

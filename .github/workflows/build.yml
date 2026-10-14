@@ -20,11 +20,16 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Preparar Android SDK
+      - name: uses: android-actions/setup-android@v3
         uses: android-actions/setup-android@v3
 
       - name: Criar projeto Android
         run: |
+      - name: Preparar Android SDK
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
           mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/diego/dizionario
           mkdir -p app/src/main/res/values

@@ -1,4 +1,3 @@
-
 name: Build Android APK
 
 on:
@@ -11,29 +10,35 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Baixar arquivos do repositorio
+      - name: Baixar arquivos do repositório
         uses: actions/checkout@v4
 
       - name: Preparar Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
-      - name: uses: android-actions/setup-android@v3
+      - name: Preparar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Criar projeto Android
+      - name: Instalar componentes Android
         run: |
-      - name: Preparar Android SDK
-        run: |
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+          yes | sdkmanager --licenses || true
+          sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Criar projeto Android
+        shell: bash
+        run: |
+          set -e
           mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/diego/dizionario
           mkdir -p app/src/main/res/values
-
           cp index.html app/src/main/assets/index.html
 
           cat > settings.gradle <<'EOF'
@@ -143,9 +148,7 @@ jobs:
           EOF
 
       - name: Compilar APK
-        run: |
-          gradle --version
-          gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4

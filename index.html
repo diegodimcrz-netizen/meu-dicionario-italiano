@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173d32">
+<title>Il Mio Dizionario</title>
+<style>
+:root {
+  --green: #173d32;
+  --cream: #f7f5ef;
+  --gold: #d6b46a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--cream);
+  color: #202820;
+}
+header {
+  background: var(--green);
+  color: white;
+  padding: 27px 20px;
+  text-align: center;
+}
+header h1 { margin: 0 0 8px; font-size: 27px; }
+header p { margin: 0; color: #e5e9e3; }
+main { max-width: 650px; margin: auto; padding: 18px; }
+input, button {
+  font: inherit;
+  border-radius: 10px;
+  padding: 13px;
+}
+input {
+  width: 100%;
+  border: 1px solid #d5d7ce;
+  background: white;
+  margin: 8px 0;
+}
+.tabs { display: flex; gap: 8px; margin: 12px 0; }
+button {
+  border: 0;
+  cursor: pointer;
+}
+.tabs button, .action {
+  background: var(--green);
+  color: white;
+}
+.tabs button { flex: 1; }
+.tabs button.active { background: var(--gold); color: #202820; }
+.card {
+  background: white;
+  padding: 17px;
+  border-radius: 14px;
+  margin: 12px 0;
+  box-shadow: 0 2px 9px #0000000a;
+}
+.word { font-size: 23px; font-weight: bold; color: var(--green); }
+.pron { color: #777; margin: 7px 0; }
+.translation { font-size: 18px; }
+.example { margin-top: 12px; line-height: 1.5; }
+.small { font-size: 13px; color: #777; }
+.star { float: right; background: #f4f0e4; }
+form { margin-top: 18px; }
+#status { min-height: 20px; color: var(--green); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🇮🇹 Il Mio Dizionario</h1>
+  <p>Italiano – Português</p>
+</header>
+
+<main>
+  <input id="search" placeholder="Pesquisar palavra em italiano ou português..." autocomplete="off">
+
+  <div class="tabs">
+    <button id="allTab" class="active" onclick="showMode('all')">Todas</button>
+    <button id="favTab" onclick="showMode('fav')">★ Favoritas</button>
+  </div>
+
+  <p id="count" class="small"></p>
+  <section id="results"></section>
+
+  <div class="card">
+    <h3>➕ Adicionar palavra</h3>
+    <form id="addForm">
+      <input id="it" placeholder="Palavra em italiano" required>
+      <input id="pt" placeholder="Tradução em português" required>
+      <input id="pron" placeholder="Pronúncia aproximada (opcional)">
+      <input id="ex" placeholder="Exemplo em italiano (opcional)">
+      <button class="action" type="submit">Salvar palavra</button>
+    </form>
+    <p id="status"></p>
+    <p class="small">As palavras adicionadas ficam salvas neste navegador.</p>
+  </div>
+</main>
+
+<script>
+const initial = [
+["ciao","olá; tchau","tcháo","Ciao, Diego!"],
+["buongiorno","bom dia","buon-djór-no","Buongiorno, come stai?"],
+["buonasera","boa noite (ao chegar)","buo-na-sê-ra","Buonasera a tutti."],
+["buonanotte","boa noite (ao dormir)","buo-na-nót-te","Buonanotte, a domani."],
+["grazie","obrigado(a)","grát-tsie","Grazie mille!"],
+["prego","de nada; pois não","prê-go","Prego, entra pure."],
+["per favore","por favor","per fa-vô-re","Un caffè, per favore."],
+["scusa","desculpa","scú-za","Scusa, non ho capito."],
+["sì","sim","si","Sì, va bene."],
+["no","não","nó","No, grazie."],
+["come stai?","como você está?","cô-me stái","Ciao, come stai?"],
+["bene","bem","bê-ne","Sto bene, grazie."],
+["male","mal","má-le","Oggi sto male."],
+["casa","casa","cá-za","Sono a casa."],
+["lavoro","trabalho","la-vó-ro","Vado al lavoro."],
+["famiglia","família","fa-mí-lha","Amo la mia famiglia."],
+["moglie","esposa","mó-lhe","Mia moglie è gentile."],
+["figlio","filho","fí-lho","Mio figlio va a scuola."],
+["uomo","homem","uô-mo","Quell'uomo è italiano."],
+["donna","mulher","dón-na","Quella donna sorride."],
+["acqua","água","á-kua","Bevo acqua."],
+["caffè","café","kaf-fé","Bevo un caffè."],
+["pane","pão","pá-ne","Vorrei del pane."],
+["pollo","frango","pól-lo","Mangio il pollo."],
+["manzo","carne bovina","mán-dzo","Mi piace il manzo."],
+["birra","cerveja","bír-ra","Una birra fredda, per favore."],
+["cena","jantar","tchê-na","La cena è pronta."],
+["mangiare","comer","man-djá-re","Mi piace mangiare."],
+["bere","beber","bê-re","Voglio bere acqua."],
+["cucinare","cozinhar","cu-tchi-ná-re","Mi piace cucinare."],
+["lavorare","trabalhar","la-vo-rá-re","Devo lavorare."],
+["studiare","estudar","stu-diá-re","Studio italiano ogni giorno."],
+["parlare","falar","par-lá-re","Parlo un po' italiano."],
+["capire","entender","ca-pí-re","Non riesco a capire."],
+["imparare","aprender","im-pa-rá-re","Voglio imparare l'italiano."],
+["esercitarsi","praticar; exercitar-se","e-zer-tchi-tár-si","Devo esercitarmi."],
+["andare","ir","an-dá-re","Vado in palestra."],
+["venire","vir","ve-ní-re","Vieni con me?"],
+["essere","ser; estar","és-se-re","Sono brasiliano."],
+["avere","ter","a-vê-re","Ho un figlio."],
+["fare","fazer","fá-re","Che cosa fai?"],
+["volere","querer","vo-lê-re","Voglio imparare."],
+["potere","poder","po-tê-re","Posso entrare?"],
+["dovere","dever; precisar","do-vê-re","Devo studiare."],
+["oggi","hoje","ód-dji","Oggi lavoro."],
+["domani","amanhã","do-má-ni","A domani!"],
+["ieri","ontem","iê-ri","Ieri ho lavorato."],
+["sempre","sempre","sêm-pre","Studio sempre."],
+["spesso","frequentemente","spés-so","Vado spesso in palestra."],
+["di solito","geralmente","di só-li-to","Di solito mi sveglio presto."],
+["prima","antes; primeiro","prí-ma","Prima di dormire, leggo."],
+["dopo","depois","dó-po","Dopo lavoro, vado a casa."],
+["perché","porque; por quê","per-ké","Perché studi italiano?"],
+["dove","onde","dô-ve","Dove abiti?"],
+["quando","quando","kuán-do","Quando parti?"],
+["quanto","quanto","kuán-to","Quanto costa?"],
+["chi","quem","ki","Chi è?"],
+["bagno","banheiro","bá-nho","Dov'è il bagno?"],
+["palestra","academia","pa-lés-tra","Vado in palestra tre volte a settimana."],
+["correre","correr","cór-re-re","Mi piace correre."],
+["camminare","caminhar","cam-mi-ná-re","Cammino ogni giorno."],
+["acqua","água","á-kua","Vorrei un bicchiere d'acqua."],
+["libro","livro","lí-bro","Leggo un libro."],
+["scuola","escola","skuô-la","Mio figlio va a scuola."],
+["macchina","carro; máquina","mák-ki-na","La macchina è nuova."],
+["strada","rua; estrada","strá-da","Dov'è questa strada?"],
+["amico","amigo","a-mí-co","Lui è un mio amico."],
+["amore","amor","a-mô-re","Amore mio."],
+["bello","bonito","bél-lo","Che bel giorno!"],
+["buono","bom","buô-no","Il caffè è buono."],
+["freddo","frio","fréd-do","L'acqua è fredda."],
+["caldo","quente","cál-do","Oggi fa caldo."],
+["stanco","cansado","stán-co","Sono stanco."],
+["felice","feliz","fe-lí-tche","Sono felice."],
+["oggi lavoro","hoje trabalho","ód-dji la-vó-ro","Oggi lavoro fino alle sei."],
+["non ho capito","não entendi","non ó ca-pí-to","Scusa, non ho capito."],
+["piano piano","devagar; aos poucos","piá-no piá-no","Parla piano piano, per favore."],
+["mi chiamo","me chamo","mi kiá-mo","Mi chiamo Diego."],
+["vivo","vivo; moro","ví-vo","Vivo in Brasile."],
+["brasiliano","brasileiro","bra-zi-liá-no","Sono brasiliano."],
+["italiano","italiano; língua italiana","i-ta-liá-no","Studio italiano."],
+["grazie mille","muito obrigado","grát-tsie míl-le","Grazie mille per l'aiuto."]
+];
+
+const key = "mioDizionarioV1";
+const favKey = "mioDizionarioFavV1";
+let words = initial.map((w,i)=>({id:i,it:w[0],pt:w[1],pron:w[2],ex:w[3]}));
+let favorites = [];
+let mode = "all";
+
+try {
+  const saved = JSON.parse(localStorage.getItem(key) || "[]");
+  words = words.concat(saved);
+  favorites = JSON.parse(localStorage.getItem(favKey) || "[]");
+} catch(e) {}
+
+function persist() {
+  localStorage.setItem(key, JSON.stringify(
+    words.filter(w => typeof w.id === "string")
+  ));
+  localStorage.setItem(favKey, JSON.stringify(favorites));
+}
+
+function showMode(next) {
+  mode = next;
+  document.getElementById("allTab").classList.toggle("active", mode==="all");
+  document.getElementById("favTab").classList.toggle("active", mode==="fav");
+  render();
+}
+
+function render() {
+  const q = document.getElementById("search").value.trim().toLocaleLowerCase("it");
+  const list = words.filter(w =>
+    (mode==="all" || favorites.includes(w.id)) &&
+    (w.it.toLocaleLowerCase("it").includes(q) ||
+     w.pt.toLocaleLowerCase("pt-BR").includes(q) ||
+     (w.pron || "").toLocaleLowerCase("pt-BR").includes(q))
+  );
+  document.getElementById("count").textContent =
+    list.length + (list.length===1 ? " resultado" : " resultados");
+  const results = document.getElementById("results");
+  results.replaceChildren();
+
+  if (!list.length) {
+    results.textContent = "Nenhuma palavra encontrada. Você pode adicioná-la abaixo.";
+    return;
+  }
+
+  list.forEach(w => {
+    const card = document.createElement("article");
+    card.className = "card";
+    const star = document.createElement("button");
+    star.className = "star";
+    star.textContent = favorites.includes(w.id) ? "★" : "☆";
+    star.setAttribute("aria-label", "Alternar favorito");
+    star.onclick = () => {
+      favorites = favorites.includes(w.id)
+        ? favorites.filter(id => id!==w.id)
+        : [...favorites,w.id];
+      persist();
+      render();
+    };
+
+    const title = document.createElement("div");
+    title.className = "word";
+    title.textContent = w.it;
+    title.appendChild(star);
+
+    const pron = document.createElement("div");
+    pron.className = "pron";
+    pron.textContent = "Pronúncia aproximada: " + (w.pron || "não informada");
+
+    const translation = document.createElement("div");
+    translation.className = "translation";
+    translation.textContent = w.pt;
+
+    card.append(title,pron,translation);
+    if (w.ex) {
+      const example = document.createElement("div");
+      example.className = "example";
+      example.textContent = "Exemplo: " + w.ex;
+      card.appendChild(example);
+    }
+    results.appendChild(card);
+  });
+}
+
+document.getElementById("search").addEventListener("input", render);
+
+document.getElementById("addForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const it = document.getElementById("it").value.trim();
+  const pt = document.getElementById("pt").value.trim();
+  const pron = document.getElementById("pron").value.trim();
+  const ex = document.getElementById("ex").value.trim();
+
+  if (!it || !pt) return;
+
+  words.push({id:"custom-"+Date.now(),it,pt,pron,ex});
+  persist();
+  e.target.reset();
+  document.getElementById("status").textContent = "Palavra salva!";
+  document.getElementById("search").value = "";
+  showMode("all");
+});
+
+render();
+</script>
+</body>
+</html>

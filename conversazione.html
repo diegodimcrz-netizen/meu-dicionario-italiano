@@ -9,7 +9,7 @@
 *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
 header{background:var(--green);color:white;padding:18px 20px}header h1{font-size:1.2rem;margin:0}header p{margin:4px 0 0;color:#e0e9e4;font-size:.9rem}
 main{max-width:760px;margin:auto;padding:16px;display:grid;gap:14px}
-.avatar{min-height:300px;border-radius:22px;overflow:hidden;background:linear-gradient(145deg,#e9d6c2,#f5e9dc 50%,#c6d7c8);display:grid;place-items:center;position:relative}
+.avatar{min-height:350px;padding:46px 14px 54px;border-radius:22px;overflow:hidden;background:linear-gradient(145deg,#e9d6c2,#f5e9dc 50%,#c6d7c8);display:grid;place-items:center;position:relative}
 .portrait{width:170px;height:235px;position:relative;transform-origin:50% 85%;animation:idle-sway 3.8s ease-in-out infinite}
 .hair{position:absolute;left:23px;top:6px;width:125px;height:145px;background:#4b3028;border-radius:55% 48% 44% 45%;box-shadow:inset 12px 0 #634034}
 .face{position:absolute;left:36px;top:27px;width:100px;height:128px;background:#f3cdb8;border-radius:48% 48% 45% 45%;z-index:2;box-shadow:inset 8px 0 #f8d9c7;transform-origin:50% 20%}
@@ -44,12 +44,12 @@ small{color:var(--muted)}.status{font-size:.9rem;color:var(--muted);min-height:2
 <section class="avatar" id="avatar" aria-label="Rappresentazione visiva animata di Akira">
  <div class="tag">● Akira · tutor d’italiano</div>
  <div class="portrait" aria-hidden="true"><div class="hair"></div><div class="neck"></div><div class="body"></div><div class="face"><div class="cheek"></div></div><div class="hairline"></div></div>
- <div class="note">Akira · piscadas e movimentos suaves durante a fala</div>
+ <div class="note">Avatar ilustrado · voz em italiano</div>
 </section>
 <section class="bubble"><div class="label">AKIRA DICE</div><div class="italian" id="prompt">Ciao, Diego! Che lavoro fai?</div><div class="pron" id="pron">Pronúncia: tcháo, Diêgo! ke lavôro fai?</div><div class="translation" id="translation">Tradução: Olá, Diego! Qual é o seu trabalho?</div><div class="row" style="margin-top:14px"><button id="speak">🔊 Ouvir frase</button><button class="secondary" id="next">Próxima pergunta</button></div></section>
 <section class="panel"><div class="label">A SUA RESPOSTA</div><textarea id="answer" placeholder="Escreva sua resposta em italiano… ou use o microfone abaixo."></textarea><div class="row" style="margin-top:10px"><button id="mic">🎙️ Falar</button><button class="secondary" id="correct">Corrigir minha frase</button></div><p class="status" id="status" role="status">Toque em “Ouvir frase” para escutar a Akira e ver as animações.</p></section>
 <section class="panel" id="feedback" aria-live="polite"><div class="label">CORREÇÃO E PRONÚNCIA</div><p>Quando você responder, a correção aparecerá aqui. Esta versão inicial oferece fala sintetizada e reconhecimento de voz quando compatíveis com o navegador; ainda não é uma conversa com IA em tempo real.</p></section>
-<small>Esta versão usa animações 2D simples no avatar ilustrado. Para movimentos realistas e sincronização labial precisa, será necessário integrar uma tecnologia de avatar dedicada.</small>
+<small>Esta versão já tem voz em italiano e animações 2D simples. Um avatar humano realista com lábios sincronizados será uma próxima etapa, com tecnologia própria de avatar.</small>
 </main>
 <script>
 const qs=[

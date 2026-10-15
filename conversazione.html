@@ -19,7 +19,9 @@ main{max-width:760px;margin:auto;padding:16px;display:grid;gap:14px}
 .avatar.speaking .face{animation:head-talk 2.4s ease-in-out infinite}
 .avatar.speaking .face:after{animation:mouth-talk .22s ease-in-out infinite alternate}
 .avatar.speaking .body{animation:body-talk 1.7s ease-in-out infinite}
-@keyframes blink{0%,44%,48%,72%,76%,100%{transform:scaleY(1)}46%,74%{transform:scaleY(.12)}}\n@keyframes idle-sway{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1.5deg)}}\n@keyframes breathing{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.035)}}
+@keyframes blink{0%,44%,48%,72%,76%,100%{transform:scaleY(1)}46%,74%{transform:scaleY(.12)}}
+@keyframes idle-sway{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1.5deg)}}
+@keyframes breathing{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.035)}}
 @keyframes gentle-bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(1deg)}}
 @keyframes head-talk{0%,100%{transform:rotate(0)}35%{transform:rotate(-1.5deg)}70%{transform:rotate(1.2deg)}}
 @keyframes mouth-talk{from{height:3px;width:17px;border-bottom-width:2px}to{height:13px;width:15px;border:2px solid #a95f58;border-radius:45% 45% 55% 55%;background:#8d4646}}

@@ -87,15 +87,15 @@ document.getElementById('correct').onclick=()=>{
  const original=a;
  let suggestions=[];
  const rules=[
-  [/\\b(io\\s+)?vado\\s+a\\s+palestra\\b/ig,'vado in palestra','Com “palestra”, normalmente usamos “in”: vado in palestra.'],
-  [/\\b(io\\s+)?vivo\\s+in\\s+Cruzeiro\\b/ig,'vivo a Cruzeiro','Para uma cidade, usamos “a”: vivo a Cruzeiro.'],
-  [/\\b(io\\s+)?sono\\s+fabro\\b/ig,'sono fabbro','A palavra correta para serralheiro é “fabbro”.'],
-  [/\\b(io\\s+)?lavoro\\s+per\\s+me\\s+stesso\\b/ig,'lavoro per conto mio','Uma forma natural de dizer “trabalho por conta própria” é “lavoro per conto mio”.'],
-  [/\\bda\\s+cinque\\s+anno\\b/ig,'da cinque anni','Depois de “cinque”, o substantivo fica no plural: “anni”.'],
-  [/\\bmi\\s+piace\\s+fare\\s+sport\\s+con\\s+mia\\s+famiglia\\b/ig,'mi piace fare sport con la mia famiglia','Neste contexto, soa mais natural dizer “con la mia famiglia”.']
+  [/\b(io\s+)?vado\s+a\s+palestra\b/ig,'vado in palestra','Com “palestra”, normalmente usamos “in”: vado in palestra.'],
+  [/\b(io\s+)?vivo\s+in\s+Cruzeiro\b/ig,'vivo a Cruzeiro','Para uma cidade, usamos “a”: vivo a Cruzeiro.'],
+  [/\b(io\s+)?sono\s+fabro\b/ig,'sono fabbro','A palavra correta para serralheiro é “fabbro”.'],
+  [/\b(io\s+)?lavoro\s+per\s+me\s+stesso\b/ig,'lavoro per conto mio','Uma forma natural de dizer “trabalho por conta própria” é “lavoro per conto mio”.'],
+  [/\bda\s+cinque\s+anno\b/ig,'da cinque anni','Depois de “cinque”, o substantivo fica no plural: “anni”.'],
+  [/\bmi\s+piace\s+fare\s+sport\s+con\s+mia\s+famiglia\b/ig,'mi piace fare sport con la mia famiglia','Neste contexto, soa mais natural dizer “con la mia famiglia”.']
  ];
  for(const [pattern,correct,explain] of rules){if(pattern.test(a)){a=a.replace(pattern,correct);suggestions.push(explain);pattern.lastIndex=0;}}
- const looksItalian=/\\b(sono|ho|vado|faccio|lavoro|studio|vivo|mi|piace|preferisco|perché|perche|con|oggi|dopo|alla|in|da)\\b/i.test(original);
+ const looksItalian=/\b(sono|ho|vado|faccio|lavoro|studio|vivo|mi|piace|preferisco|perché|perche|con|oggi|dopo|alla|in|da)\b/i.test(original);
  feedback.innerHTML='<div class="label">LA TUA RISPOSTA</div><p class="italian user-answer"></p><div class="label">SUGGERIMENTI</div><div class="hint-list"></div><p class="small-note">Sugestões automáticas básicas: elas reconhecem apenas alguns padrões comuns. Para uma correção completa de gramática e significado, envie sua resposta nesta conversa.</p>';
  feedback.querySelector('.user-answer').textContent=original;
  const list=feedback.querySelector('.hint-list');

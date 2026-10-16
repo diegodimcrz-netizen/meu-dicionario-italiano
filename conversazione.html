@@ -59,10 +59,20 @@ small{color:var(--muted)}.status{font-size:.9rem;color:var(--muted);min-height:2
 </main>
 <script>
 const qs=[
-{it:"Ciao, Diego! Che lavoro fai?",pr:"tcháo, Diêgo! ke lavôro fai?",pt:"Olá, Diego! Qual é o seu trabalho?"},
+{it:"Ciao! Che lavoro fai?",pr:"tcháo! ke lavôro fai?",pt:"Olá! Qual é o seu trabalho?"},
 {it:"Lavori da solo o con qualcuno?",pr:"lavôri da sôlo o con kwal-kúno?",pt:"Você trabalha sozinho ou com alguém?"},
 {it:"Che cosa fai durante la giornata?",pr:"ke côza fai durante la djornáta?",pt:"O que você faz durante o dia?"},
-{it:"Lavori con l’alluminio e il vetro?",pr:"lavôri con lal-lumínio e il vê-tro?",pt:"Você trabalha com alumínio e vidro?"}
+{it:"Lavori con l’alluminio e il vetro?",pr:"lavôri con lal-lumínio e il vê-tro?",pt:"Você trabalha com alumínio e vidro?"},
+{it:"Da quanto tempo studi italiano?",pr:"da kuánto têm-po stúdi italiáno?",pt:"Há quanto tempo você estuda italiano?"},
+{it:"Perché vuoi imparare l’italiano?",pr:"per-kê vuói imparáre l’italiáno?",pt:"Por que você quer aprender italiano?"},
+{it:"A che ora ti svegli la mattina?",pr:"a ke ôra ti zvélhi la mat-tína?",pt:"A que horas você acorda de manhã?"},
+{it:"Che cosa fai dopo il lavoro?",pr:"ke côza fai dôpo il lavôro?",pt:"O que você faz depois do trabalho?"},
+{it:"Quante volte alla settimana vai in palestra?",pr:"kuánte vólte alla set-timána vai in paléstra?",pt:"Quantas vezes por semana você vai à academia?"},
+{it:"Che cosa ti piace fare con la tua famiglia?",pr:"ke côza ti piátche fáre con la túa famílha?",pt:"O que você gosta de fazer com sua família?"},
+{it:"Qual è il tuo piatto preferito?",pr:"kuál é il túo piátto preferíto?",pt:"Qual é o seu prato favorito?"},
+{it:"Che cosa fai nel fine settimana?",pr:"ke côza fai nel fíne set-timána?",pt:"O que você faz no fim de semana?"},
+{it:"Preferisci correre o camminare?",pr:"preferíschi kór-re-re o cam-mináre?",pt:"Você prefere correr ou caminhar?"},
+{it:"Dove vivi e da quanto tempo?",pr:"dôve vívi e da kuánto têm-po?",pt:"Onde você mora e há quanto tempo?"}
 ];let idx=0;const avatar=document.getElementById('avatar');const statusEl=document.getElementById('status');
 function stopMotion(){avatar.classList.remove('speaking')}
 function show(){speechSynthesisSafeCancel();stopMotion();let q=qs[idx];document.getElementById('prompt').textContent=q.it;document.getElementById('pron').textContent="Pronúncia: "+q.pr;document.getElementById('translation').textContent="Tradução: "+q.pt;document.getElementById('answer').value="";document.getElementById('feedback').innerHTML='<div class="label">CORREÇÃO E PRONÚNCIA</div><p>Responda em italiano e toque em “Corrigir minha frase”.</p>'}
@@ -70,5 +80,33 @@ function speechSynthesisSafeCancel(){if('speechSynthesis'in window)speechSynthes
 document.getElementById('next').onclick=()=>{idx=(idx+1)%qs.length;show()};
 document.getElementById('speak').onclick=()=>{if(!('speechSynthesis'in window)){statusEl.textContent='A fala sintetizada não é suportada neste navegador.';return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(qs[idx].it);u.lang='it-IT';u.rate=.82;u.onstart=()=>{avatar.classList.add('speaking');statusEl.textContent='Akira sta parlando… A Akira está falando! Observe a boca e a cabeça.'};u.onend=()=>{stopMotion();statusEl.textContent='Frase concluída. Toque novamente para ouvir.'};u.onerror=()=>{stopMotion();statusEl.textContent='Não foi possível reproduzir a voz agora.'};speechSynthesis.speak(u)};
 document.getElementById('mic').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){statusEl.textContent='Reconhecimento de voz indisponível neste navegador. Você pode digitar a resposta.';return}let r=new SR();r.lang='it-IT';r.interimResults=true;r.onresult=e=>{document.getElementById('answer').value=Array.from(e.results).map(x=>x[0].transcript).join('');statusEl.textContent='Transcrição recebida. Toque em “Corrigir minha frase”.'};r.onerror=()=>statusEl.textContent='Não foi possível reconhecer a fala. Verifique a permissão do microfone.';r.start();statusEl.textContent='Ti ascolto… Parla in italiano!'};
-document.getElementById('correct').onclick=()=>{let a=document.getElementById('answer').value.trim();if(!a){statusEl.textContent='Escreva ou dite uma frase primeiro.';return}let feedback=document.getElementById('feedback');feedback.innerHTML='<div class="label">SUA FRASE</div><p class="italian"></p><p>Esta versão ainda não está conectada à IA, então não consigo determinar a correção automaticamente. Envie sua frase nesta conversa para receber uma correção personalizada.</p>';feedback.querySelector('.italian').textContent=a;statusEl.textContent='Frase pronta para revisão.'};
+document.getElementById('correct').onclick=()=>{
+ let a=document.getElementById('answer').value.trim();
+ if(!a){statusEl.textContent='Scrivi o pronuncia una frase prima.';return}
+ const feedback=document.getElementById('feedback');
+ const original=a;
+ let suggestions=[];
+ const rules=[
+  [/\\b(io\\s+)?vado\\s+a\\s+palestra\\b/ig,'vado in palestra','Com “palestra”, normalmente usamos “in”: vado in palestra.'],
+  [/\\b(io\\s+)?vivo\\s+in\\s+Cruzeiro\\b/ig,'vivo a Cruzeiro','Para uma cidade, usamos “a”: vivo a Cruzeiro.'],
+  [/\\b(io\\s+)?sono\\s+fabro\\b/ig,'sono fabbro','A palavra correta para serralheiro é “fabbro”.'],
+  [/\\b(io\\s+)?lavoro\\s+per\\s+me\\s+stesso\\b/ig,'lavoro per conto mio','Uma forma natural de dizer “trabalho por conta própria” é “lavoro per conto mio”.'],
+  [/\\bda\\s+cinque\\s+anno\\b/ig,'da cinque anni','Depois de “cinque”, o substantivo fica no plural: “anni”.'],
+  [/\\bmi\\s+piace\\s+fare\\s+sport\\s+con\\s+mia\\s+famiglia\\b/ig,'mi piace fare sport con la mia famiglia','Neste contexto, soa mais natural dizer “con la mia famiglia”.']
+ ];
+ for(const [pattern,correct,explain] of rules){if(pattern.test(a)){a=a.replace(pattern,correct);suggestions.push(explain);pattern.lastIndex=0;}}
+ const looksItalian=/\\b(sono|ho|vado|faccio|lavoro|studio|vivo|mi|piace|preferisco|perché|perche|con|oggi|dopo|alla|in|da)\\b/i.test(original);
+ feedback.innerHTML='<div class="label">LA TUA RISPOSTA</div><p class="italian user-answer"></p><div class="label">SUGGERIMENTI</div><div class="hint-list"></div><p class="small-note">Sugestões automáticas básicas: elas reconhecem apenas alguns padrões comuns. Para uma correção completa de gramática e significado, envie sua resposta nesta conversa.</p>';
+ feedback.querySelector('.user-answer').textContent=original;
+ const list=feedback.querySelector('.hint-list');
+ if(suggestions.length){
+   const p=document.createElement('p');p.textContent='Possível ajuste: '+a;list.appendChild(p);
+   suggestions.forEach(t=>{const item=document.createElement('p');item.textContent='• '+t;list.appendChild(item)});
+ }else{
+   const p=document.createElement('p');
+   p.textContent=looksItalian?'Ótimo treino! Não encontrei nenhum dos erros específicos que esta versão sabe detectar. Isso não garante que a frase esteja totalmente correta.':'Tente montar uma frase completa em italiano: sujeito (se necessário) + verbo + complemento.';
+   list.appendChild(p);
+ }
+ statusEl.textContent='Sugestões básicas exibidas. Continua a parlare!';
+};
 </script></body></html>
